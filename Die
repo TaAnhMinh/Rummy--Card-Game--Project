@@ -1,0 +1,22 @@
+// Ta Anh Minh, 300078762, University Of Ottawa
+import java.util.Random;
+public class Die {
+	public final int MAXVALUE = 6;
+	private int value;
+	public Die() {
+		roll();
+	}
+
+	public int getValue () {
+		return value;
+	}
+
+	public void roll () {
+		Random values = new Random();
+		value = values.nextInt(MAXVALUE) +1;
+	}
+	public String toString () {
+		return ("Die {value:" + value + "}");
+	}
+
+}

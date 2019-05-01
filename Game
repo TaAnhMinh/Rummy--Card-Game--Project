@@ -1,0 +1,164 @@
+// Ta Anh Minh, 300078762, University Of Ottawa
+public class Game {
+	Deck deck;
+	Die die;
+	Deck cardsInRank = new Deck();
+	Deck cardsInSeq = new Deck();
+	Utils a;
+
+	public Game (int rank) {
+		deck = new Deck (rank);
+		die = new Die();
+
+	}
+
+	public void play () {
+		Deck hand = new Deck();
+		//Step 1, deal 7 cards.
+		hand = deck.deal(7);
+		System.out.println("Your hand is: ");
+		System.out.println(hand);
+		int round = 0;
+		while (hand.hasCards()== true) {
+			die.roll();
+			if ((deck.hasCards() == false) && (hand.isKind() == false) && (hand.isSeq() == false)) { // roll the dice until get 1
+				while (die.getValue() != 1) {														//when no melds on hand and
+					die.roll();																		//cards left in deck.
+				}
+			}
+			System.out.println("You rolled: " + die.getValue());
+
+			//Step 2, if the dice roll 1.
+			if (die.getValue() == 1) {	//done
+				System.out.println(hand);
+				Card removeCard;
+				boolean count = true;
+				do {
+					System.out.println("Enter the card that you want to discard");
+					removeCard = Utils.readCard();
+					for (int i =0; i < hand.size(); i ++) {
+						if (hand.get(i).getRank() == removeCard.getRank()) { // working
+							if (hand.get(i).getSuit() == removeCard.getSuit()) { // working
+								hand.remove(removeCard);
+								count = false;
+							}
+						}
+					}
+				} while (count);
+
+				System.out.print("Your new hand is: [");
+				System.out.print(hand);
+				System.out.println("]");
+			} // working
+			// Step 2, if the dice roll larger than 1.
+
+			else {
+				//dealing cards
+				if (deck.hasCards()) { // working
+					// if the dice value larger than deck size
+					if (die.getValue() > deck.size()) {
+						Deck cardDraw = deck.deal(deck.size());
+						hand.addAll(cardDraw);
+					} //working
+					else {
+						// if not, draw the cards
+						Deck cardDraw = deck.deal(die.getValue());
+						hand.addAll(cardDraw);
+					} // working
+				}
+				while (hand.isSeq() == true) {
+					// sortBySuit puts the cards in order by ranks and suit. Easier to discard the cards
+					hand.sortBySuit();
+					System.out.print("Your hand after being sorted: ");
+					System.out.println(hand);
+					int suitOrNo = 1;
+					int count1 = 1;
+					do {
+						do {
+							// now we have a sequence of cards.
+							cardsInSeq = Utils.readCards("You have a sequence, please discard them");
+							cardsInSeq.sortBySuit(); // I have a few cards sorted from big to small.
+							for (int z = 0; z < cardsInSeq.size()-1; z++) {
+								if (cardsInSeq.get(z).getSuit() == cardsInSeq.get(z+1).getSuit()) {
+									if (cardsInSeq.get(z).getRank() == ((cardsInSeq.get(z+1).getRank())-1)) {
+										suitOrNo ++;
+									}
+								}
+							}
+							if (suitOrNo != cardsInSeq.size()) {
+								System.out.println ("Cards do not have the same suit or continuous ranks, please re-enter");
+								suitOrNo = 1;
+
+							}
+						} while (suitOrNo != cardsInSeq.size());
+						int n = 0;
+						for (int m = 0; m < hand.size()-1; m++) {
+							if ((hand.get(m).getSuit() == hand.get(m+1).getSuit()) && (hand.get(m).getSuit() == cardsInSeq.get(0).getSuit())) {
+									//we know that cardInSeq are in increasing order (by 1) so no need to check again.
+									//we need to check the hand ranks.
+									//we only need to check to see whether hand and cardsInSeq are at the same page or not.
+								if ((hand.get(m).getRank() == (hand.get(m+1).getRank())-1) && (hand.get(m).getRank() == cardsInSeq.get(n).getRank())) {
+									count1 ++;
+									n++;
+								}
+							}
+						}
+
+						if ((count1 == cardsInSeq.size()) && (count1 >=3)) {
+							hand.removeAll(cardsInSeq);
+						} else {
+							System.out.println("The cards that you have entered does not exist on the hand, please re-enter the cards.");
+							cardsInSeq.removeAll(cardsInSeq);
+							suitOrNo =1;
+							count1 = 1;
+						}
+					} while (count1 != cardsInSeq.size());
+
+					//display new hand
+					System.out.print("Your new hand is: ");
+					System.out.println(hand);
+				}
+
+					while (hand.isKind() == true){ // working
+						hand.sortByRank();
+						System.out.print("Your hand after being sorted by rank: ");
+						System.out.println(hand);
+						int counting = 1;
+
+						do {
+							cardsInRank = Utils.readCards("You have a kind, please discard them");
+							//counting the number of cards that are similar to the one user input.
+							cardsInRank.sortByRank();
+							for (int p = 0; p < cardsInRank.size() -1; p++) {
+								if (cardsInRank.get(p).getRank() == cardsInRank.get(p+1).getRank()) {
+									for (int c = 0; c < hand.size(); c++) {
+										//only count when 2 cards are the same.
+										if ((cardsInRank.get(p).getRank()) == (hand.get(c).getRank())) {
+											if ((cardsInRank.get(p).getSuit())== hand.get(c).getSuit()) {
+												counting++;
+											}
+										}
+									}
+								}
+							}
+							if (counting == cardsInRank.size()) {
+								hand.removeAll(cardsInRank);
+							} else {
+								System.out.println("Cards do not have same rank, please re-enter");
+								counting = 1;
+							}
+						} while (counting != cardsInRank.size()); // if counting equals what the number of cards entered, continue
+
+						//display new hand
+						System.out.print("Your new hand is: ");
+						System.out.println(hand);
+					}
+					if ((hand.isKind() == false) && (hand.isSeq() == false)) {
+						System.out.println ("There are no kinds or sequences in your hand");
+					}
+			}
+			round++;
+		}
+		System.out.println("The number of rounds that the user takes to empty the hand is: " + round);
+	}
+}

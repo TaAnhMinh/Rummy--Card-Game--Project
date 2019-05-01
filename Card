@@ -1,0 +1,44 @@
+// Ta Anh Minh, 300078762, University Of Ottawa
+public class Card {
+	private int suit;
+	private int rank;
+	public static int DIAMOND = 0;
+	public static int CLUB = 1;
+	public static int HEART = 2;
+	public static int SPADE = 3;
+
+	public Card(int suits, int ranks) {
+		suit = suits;
+		rank = ranks;
+	}
+
+	public int getSuit () {
+		return suit;
+	}
+
+	public int getRank () {
+		return rank;
+	}
+
+	public boolean equals(Object object) {
+		if (!(object instanceof Card)) {
+			return false;
+		}
+
+		Card other;
+		other = (Card) object;
+		int objectRank = other.getRank();
+		int objectSuit = other.getSuit();
+
+		if ((rank == objectRank) && (suit == objectSuit)) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public String toString () {
+		return ("{" + suit +", " + rank +"}");
+	}
+}

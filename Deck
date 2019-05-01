@@ -1,0 +1,270 @@
+// Ta Anh Minh, 300078762, University Of Ottawa
+import java.util.ArrayList;
+public class Deck {
+	ArrayList<Card> deckSize;
+	public Deck() {
+		deckSize = new ArrayList <Card> (0);
+	}
+	public Deck (int rankNumber) {
+		deckSize = new ArrayList<Card> ();
+		//create a deck
+		for (int i = 1; i <= rankNumber; i++) {
+			for (int o = 0 ; o < 4; o++ ) {
+				Card a = new Card (o,i);
+				deckSize.add(a);
+			}
+		}
+		// suffle  the deck
+		for (int u = 0; u < rankNumber; u++) {
+			int r = (int) (Math.random() * (rankNumber*4));
+			Card temp = deckSize.get(r);
+			deckSize.set(r, deckSize.get(u));
+			deckSize.set(u, temp);
+		}
+	}
+
+	public int size() {
+		return deckSize.size();
+	}
+
+	public boolean hasCards() {
+		if (deckSize.size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public Card get(int pos) {
+		Card size = deckSize.get(pos);
+		return size;
+	}
+
+	public void add (Card card) {
+		deckSize.add(card);
+	}
+
+	public void addAll (Deck other) {
+		for (int i = 0; i < other.size(); i ++) {
+			deckSize.add(other.get(i));
+		}
+		other.removeAll(other);
+	}
+
+	public Card removeLast() {
+		Card lastCard = deckSize.get(deckSize.size() -1);
+		deckSize.remove(deckSize.size() -1);
+		return lastCard;
+	}
+
+	public Card removeFirst() {
+		Card firstCard = deckSize.get(0);
+		deckSize.remove(0);
+		return firstCard;
+	}
+
+	public boolean remove (Card card) {
+		for (int i =0; i < deckSize.size(); i ++) {
+			if (deckSize.contains(card)) {
+				deckSize.remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void removeAll (Deck other) {
+		for (int i =0 ; i < other.size(); i ++) {
+			if (deckSize.contains(other.get(i))) {
+				deckSize.remove(other.get(i));
+			}
+		}
+	}
+
+	public void shuffle () {
+		for (int u = 0; u < deckSize.size(); u++) {
+			int r = (int) (Math.random() * (deckSize.size()));
+			Card temp = deckSize.get(r);
+			deckSize.set(r, deckSize.get(u));
+			deckSize.set(u, temp);
+		}
+	}
+
+	public Deck deal (int n) {
+		Deck a = new Deck();
+		for (int i = 1; i <= n; i++) {
+			a.add(deckSize.get(deckSize.size() -1));
+			deckSize.remove(deckSize.size() -1);
+		}
+		return a;
+	}
+
+	public boolean contains (Card card) {
+		for (int i = 0; i < deckSize.size(); i++ ) {
+			if (deckSize.get(i).equals(card)) {
+				return true;
+			}
+		} return false;
+	}
+
+	public boolean containsAll (Deck other) {
+		int counting = 0;
+		for (int i =0; i < deckSize.size(); i ++) {
+			for (int o = 0; o < other.size(); o++) {
+				if (deckSize.get(i).equals(other.get (o))) {
+					counting++;
+				}
+			}
+		}
+		if (counting == other.size()) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	public boolean isKind() {
+		for (int i =0; i < deckSize.size()-1;i++) {
+			Card w = deckSize.get(i);
+			int rank = w.getRank();
+			for (int o = 0; o < deckSize.size(); o++) {
+				if (o != i) {
+					Card p = deckSize.get(o);
+					int rank2 = p.getRank();
+					if (rank == rank2) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isSeq() {
+
+		int count =1;
+		if (deckSize.size() >= 3) {
+			sortBySuit();
+
+			for (int p = 0 ; p < deckSize.size()-1; p++) {
+				Card card1 = deckSize.get(p);
+				int suit = card1.getSuit();
+				Card card2 = deckSize.get(p+1);
+				int suit2 = card2.getSuit();
+				int rank1 = card1.getRank();
+				int rank2 = (card2.getRank())-1;
+				if (suit == suit2) { // check for suit if suits are equal, continue.
+					if (rank1 == (rank2)) {
+						count ++;
+						if (count == 3) {
+							return true;
+						}
+					}
+				}
+				if ((suit != suit2) && (rank1 != rank2)) {
+					count = 1;
+				}
+			}
+				return false;
+		}else {
+			return false;
+		}
+
+
+	}
+
+	public void sortBySuit() {
+		for (int i = 0; i < deckSize.size(); i++ ) {
+			for (int o = 0 ; o < deckSize.size()-1; o++) {
+				Card card1 = deckSize.get(o);
+				int suit = card1.getSuit();
+				Card card2 = deckSize.get(o+1);
+				int suit2 = card2.getSuit();
+				if (suit > suit2) {
+					Card temp = deckSize.get(o);
+					deckSize.set(o,deckSize.get(o+1));
+					deckSize.set(o+1, temp);
+				}
+			}
+		}
+		for (int x = 0; x < deckSize.size()-1; x++) {
+			for ( int p = 0; p < deckSize.size()-1; p++) {
+				Card card3 = deckSize.get(p);
+				int suit3 = card3.getSuit();
+				Card card4 = deckSize.get(p+1);
+				int suit4 = card4.getSuit();
+				if (suit3 == suit4) {
+					int rank = card3.getRank();
+					int rank2 = card4.getRank();
+					if (rank > rank2) {
+						Card temp = deckSize.get(p);
+						deckSize.set(p,deckSize.get(p+1));
+						deckSize.set(p+1, temp);
+					}
+				}
+			}
+		}
+	}
+
+	public void sortByRank() {
+		for (int i = 0; i < deckSize.size(); i++ ) {
+			for (int o = 0 ; o < deckSize.size()-1; o++) {
+				Card card1 = deckSize.get(o);
+				int rank = card1.getRank();
+				Card card2 = deckSize.get(o+1);
+				int rank2 = card2.getRank();
+				if (rank > rank2) {
+					Card temp = deckSize.get(o);
+					deckSize.set(o,deckSize.get(o+1));
+					deckSize.set(o+1, temp);
+				}
+			}
+		}
+
+		for (int p = 0; p < deckSize.size()-1; p++) {
+			Card card3 = deckSize.get(p);
+			int rank3 = card3.getRank();
+			Card card4 = deckSize.get(p+1);
+			int rank4 = card4.getRank();
+			if (rank3 == rank4) {
+				int suit = card3.getSuit();
+				int suit2 = card4.getSuit();
+				if (suit > suit2) {
+					Card temp = deckSize.get(p);
+					deckSize.set(p,deckSize.get(p+1));
+					deckSize.set(p+1, temp);
+				}
+			}
+		}
+	}
+
+	public void print() {
+		sortBySuit();
+		System.out.print("[");
+		for (int z = 0;  z < deckSize.size(); z++) {
+			System.out.print(deckSize.get(z));
+			if (z != deckSize.size()-2) {
+				System.out.print(",");
+			}
+		}
+		System.out.println("]");
+		// print by ranks
+		sortByRank();
+		System.out.print("[");
+		for (int i = 0; i  < deckSize.size(); i ++) {
+			System.out.print(deckSize.get(i));
+			if (i != deckSize.size() -2) {
+				System.out.print(",");
+			}
+		}
+		System.out.println("]");
+	}
+
+	public String toString () {
+		String a = "";
+		for (int i = 0; i < deckSize.size(); i++)
+		{
+			a = a + deckSize.get(i);
+		}
+		return a;
+	}
+}
